@@ -1,0 +1,1 @@
+import './mosquee.handler';
