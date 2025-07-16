@@ -13,7 +13,7 @@ import { useSearchMosquee } from "../hooks/use-search-mosquee.hook";
 
 
 export function SearchMosqueeScreen() {
-    const { t } = useTranslation();
+    const { t } = useTranslation("home");
     const { APP_NAME } = useConstants();
     const { mosquees, searchTerm, handleSearchChange, loadMore, refresh, isRefreshing } = useSearchMosquee();
 
@@ -26,11 +26,11 @@ export function SearchMosqueeScreen() {
         <ScreenLayout>
             <VStack className="flex-1 pt-4 gap-4">
                 <VStack className="px-6 gap-2">
-                    <Heading className="text-2xl">{t('welcome to')} {APP_NAME}</Heading>
+                    <Heading className="text-2xl">{t('welcome', { appName: APP_NAME })}</Heading>
                     <Input>
                         <InputField
                             className="bg-white rounded-lg border border-slate-300"
-                            placeholder={t("find your mosquee here")}
+                            placeholder={t("search_placeholder")}
                             value={searchTerm}
                             onChangeText={handleSearchChange}
                         />

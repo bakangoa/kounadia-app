@@ -13,7 +13,7 @@ import { SearchMosqueeItem } from "../../application/search-mosquee.usecase";
 type Props = SearchMosqueeItem;
 
 export function MosqueeCard(props: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation("home");
     const { formatDistance } = useGeolocation()
     return (
         <VStack className="bg-white gap-3 py-3">
@@ -37,13 +37,12 @@ export function MosqueeCard(props: Props) {
                 <Heading className="text-3xl font-medium">{props.name}</Heading>
                 <HStack space="md">
                     <Text className={props.isOpen ? "text-green-500" : "text-red-500"}>
-                        {props.isOpen ? "Ouvert" : "Fermé"}
+                        {props.isOpen ? t("opened") : t("closed")}
                     </Text>
                     <Text>
                         {
-                            props.isOpen ? `Ferme à ` : `Ouvre à `
+                            props.isOpen ? t("closed_at", { time: props.openCloseHour }) : t("open_at", { time: props.openCloseHour })
                         }
-                        {props.openCloseHour}
                     </Text>
                     <Text>
                         {formatDistance(props.distance)}

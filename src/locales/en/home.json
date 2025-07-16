@@ -1,0 +1,11 @@
+{
+    "welcome": "Welcome to {{appName}}",
+    "search_placeholder": "Find your mosquee here",
+    "share": "Share",
+    "route": "Route",
+    "favorite": "Favorite",
+    "opened": "Opened",
+    "closed": "Closed",
+    "open_at": "Open at {{time}}",
+    "closed_at": "Closed at {{time}}"
+}
