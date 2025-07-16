@@ -1,3 +1,4 @@
+import { Box } from "@/components/ui/box";
 import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
@@ -15,9 +16,10 @@ export function MosqueeCard(props: Props) {
     const { t } = useTranslation();
     const { formatDistance } = useGeolocation()
     return (
-        <VStack className="bg-white gap-3 pl-6 py-3">
+        <VStack className="bg-white gap-3 py-3">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <HStack className="gap-2">
+                    <Box className="h-full w-4" />
                     {props.photos.map((photo, index) => (
                         <Image
                             source={{
@@ -31,7 +33,7 @@ export function MosqueeCard(props: Props) {
                     ))}
                 </HStack>
             </ScrollView>
-            <VStack>
+            <VStack className="pl-6 ">
                 <Heading className="text-3xl font-medium">{props.name}</Heading>
                 <HStack space="md">
                     <Text className={props.isOpen ? "text-green-500" : "text-red-500"}>
@@ -48,7 +50,7 @@ export function MosqueeCard(props: Props) {
                     </Text>
                 </HStack>
             </VStack>
-            <HStack className="gap-2">
+            <HStack className="gap-2 pl-6 ">
                 <Button className="rounded-full">
                     <ButtonIcon />
                     <ButtonText className="capitalize-first">
@@ -64,7 +66,7 @@ export function MosqueeCard(props: Props) {
                 <Button className="rounded-full">
                     <ButtonIcon />
                     <ButtonText className="capitalize-first">
-                        {t('Favorite')}
+                        {t('favorite')}
                     </ButtonText>
                 </Button>
             </HStack>

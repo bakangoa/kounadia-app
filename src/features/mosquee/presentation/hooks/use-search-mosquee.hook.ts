@@ -49,6 +49,7 @@ export function useSearchMosquee() {
                 longitude: location.coords.longitude || 0,
             } : undefined
         }));
+        console.log("Searching for mosques with params:", params);
     }
 
     const handleSearchChange = (text: string) => {

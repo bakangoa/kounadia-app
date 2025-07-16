@@ -9,7 +9,6 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { MosqueeCard } from "../components/mosquee-card.component";
 import { useSearchMosquee } from "../hooks/use-search-mosquee.hook";
-import "../redux";
 
 
 
@@ -26,7 +25,7 @@ export function SearchMosqueeScreen() {
     return (
         <ScreenLayout>
             <VStack className="flex-1 pt-4 gap-4">
-                <VStack className="px-6">
+                <VStack className="px-6 gap-2">
                     <Heading className="text-2xl">{t('welcome to')} {APP_NAME}</Heading>
                     <Input>
                         <InputField

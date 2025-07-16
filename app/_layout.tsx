@@ -1,6 +1,7 @@
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
 import "@/src/di/register";
+import "@/src/di/runner";
 import { store } from "@/src/store";
 import { Stack } from "expo-router";
 import { Provider } from "react-redux";

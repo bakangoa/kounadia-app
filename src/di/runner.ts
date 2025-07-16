@@ -1,5 +1,4 @@
 import { MosqueeModule } from "../features/mosquee/mosquee.module";
 
-export const TOKENS = {
-    ...MosqueeModule.tokens
-};
+
+MosqueeModule.controller.proceed();
