@@ -2,5 +2,8 @@
     "title": "Add a mosquee",
     "home.card_title": "Making salaat easier with your contribution",
     "home.card_description": "Register nearby mosques and prayer places",
-    "home.card_button": "Add a mosque"
+    "home.card_button": "Add a mosque",
+    "form.step1.title": "Mosque information",
+    "form.next": "Next",
+    "form.submit": "Submit"
 }
