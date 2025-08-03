@@ -99,7 +99,7 @@ export function AddFormScreen() {
                                             case 0:
                                                 return <MosqueeInfoForm onNext={handleAction} />;
                                             case 1:
-                                                return <MosqueeOpeningHourForm />;
+                                                return <MosqueeOpeningHourForm onNext={handleAction} />;
                                         }
                                     }
                                 )()

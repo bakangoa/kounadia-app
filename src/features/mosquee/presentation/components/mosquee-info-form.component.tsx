@@ -14,14 +14,14 @@ import { z } from "zod";
 const MarkerIcon = "https://ngovnpbvytakxpgxrccq.supabase.co/storage/v1/object/public/statics//Pin%202.png";
 
 export const mosqueeInfoSchema = z.object({
-    name: z.string().min(6, "Atleast 6 characters are required."),
+    name: z.string().min(6, "form.name.error.required"),
     contact: z.string()
-        .min(10, "A valid contact number containing 10 characters is required.")
+        .min(10, "form.contact.error.min")
         .regex(
             /^\d{10}$/,
-            "A valid contact number containing 10 digits is required."
+            "form.contact.error.regex"
         ),
-    email: z.email("A valid email address is required."),
+    email: z.email("form.email.error"),
     website: z.string().optional(),
     location: z.object({
         latitude: z.number(),
@@ -80,7 +80,7 @@ export function MosqueeInfoForm(props: Props) {
                                 <FormControlError>
                                     <FormControlErrorIcon as={AlertCircleIcon} />
                                     <FormControlErrorText>
-                                        {fieldState.error?.message}
+                                        {fieldState.error?.message ? t(fieldState.error.message) : ""}
                                     </FormControlErrorText>
                                 </FormControlError>
                             </FormControl>
@@ -115,7 +115,7 @@ export function MosqueeInfoForm(props: Props) {
                                 <FormControlError>
                                     <FormControlErrorIcon as={AlertCircleIcon} />
                                     <FormControlErrorText>
-                                        {fieldState.error?.message}
+                                        {fieldState.error?.message ? t(fieldState.error.message) : ""}
                                     </FormControlErrorText>
                                 </FormControlError>
                             </FormControl>
@@ -150,7 +150,7 @@ export function MosqueeInfoForm(props: Props) {
                                 <FormControlError>
                                     <FormControlErrorIcon as={AlertCircleIcon} />
                                     <FormControlErrorText>
-                                        {fieldState.error?.message}
+                                        {fieldState.error?.message ? t(fieldState.error.message) : ""}
                                     </FormControlErrorText>
                                 </FormControlError>
                             </FormControl>
@@ -183,7 +183,7 @@ export function MosqueeInfoForm(props: Props) {
                                 <FormControlError>
                                     <FormControlErrorIcon as={AlertCircleIcon} />
                                     <FormControlErrorText>
-                                        {fieldState.error?.message}
+                                        {fieldState.error?.message ? t(fieldState.error.message) : ""}
                                     </FormControlErrorText>
                                 </FormControlError>
                             </FormControl>
@@ -229,7 +229,7 @@ export function MosqueeInfoForm(props: Props) {
                                 <FormControlError>
                                     <FormControlErrorIcon as={AlertCircleIcon} />
                                     <FormControlErrorText>
-                                        {fieldState.error?.message}
+                                        {fieldState.error?.message ? t(fieldState.error.message) : ""}
                                     </FormControlErrorText>
                                 </FormControlError>
                             </FormControl>
