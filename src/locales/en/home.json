@@ -1,6 +1,7 @@
 {
     "welcome": "Welcome to {{appName}}",
-    "search_placeholder": "Find your mosquee here",
+    "maps_title": "Nearby prayer places",
+    "search_placeholder": "Find your mosque here",
     "share": "Share",
     "route": "Route",
     "favorite": "Favorite",

@@ -6,8 +6,8 @@ export default function TabLayout() {
     return (
         <>
             <Tabs>
-                <Tabs.Screen name="(home)" options={{ headerShown: false, title: t('home') }} />
-                <Tabs.Screen name="(add)" options={{ headerShown: false, title: t('add') }} />
+                <Tabs.Screen name="home" options={{ headerShown: false, title: t('home') }} />
+                <Tabs.Screen name="add" options={{ headerShown: false, title: t('add') }} />
             </Tabs>
         </>
     );

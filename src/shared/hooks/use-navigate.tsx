@@ -24,6 +24,15 @@ export function useNavigate() {
         }));
     }
 
+    function navigateToMosqueDetails(id: string) {
+        dispatch(forward({
+            routeName: routes.MOSQUE_DETAILS,
+            params: {
+                id
+            }
+        }));
+    }
+
     function navigateBack() {
         dispatch(back());
     }
@@ -32,6 +41,7 @@ export function useNavigate() {
         navigateBack,
         navigateToHome,
         navigateToAdd,
-        navigateToAddForm
+        navigateToAddForm,
+        navigateToMosqueDetails
     }
 }

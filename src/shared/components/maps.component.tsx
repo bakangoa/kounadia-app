@@ -3,19 +3,27 @@
 import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert } from 'react-native';
+import { ActivityIndicator, Alert, NativeSyntheticEvent } from 'react-native';
 import { LatLng, LeafletView, MapMarker, WebviewLeafletMessage } from 'react-native-leaflet-view';
+import { WebViewError } from "react-native-webview/lib/WebViewTypes";
 
 const DEFAULT_LOCATION = {
     latitude: -23.5489,
     longitude: -46.6388
 }
 
+interface MarkedLocation {
+    key: string;
+    coords: LatLng
+}
+
 interface Props {
     location?: LatLng;
     selectedLocation?: LatLng;
     onSelectLocation?: (location: LatLng) => void,
-    selectionMarkerIcon?: string // icon url
+    markerIcon?: string // icon url
+    markerLocations?: MarkedLocation[]
+    onMarkedLocationPress?: (key: string) => void
 }
 export function Maps(props: Props) {
     const [webViewContent, setWebViewContent] = useState<string | null>(null);
@@ -63,14 +71,34 @@ export function Maps(props: Props) {
         }
     }, [props.location]);
 
+    useEffect(() => {
+        if (props.markerLocations) {
+            const markers = props.markerLocations.map((location) => createMarkerWithId(location.key, {
+                lat: location.coords.latitude,
+                lng: location.coords.longitude
+            }));
+            setMarkers(markers);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.markerLocations]);
+
     if (!webViewContent) {
         return <ActivityIndicator size="large" />
     }
 
     function createMarker(location: LatLng) {
         const marker: MapMarker = {
-            icon: props.selectionMarkerIcon,
-            position: location
+            icon: props.markerIcon,
+            position: location,
+        };
+        return marker;
+    }
+
+    function createMarkerWithId(id: string, location: LatLng) {
+        const marker: MapMarker = {
+            icon: props.markerIcon,
+            position: location,
+            id: id
         };
         return marker;
     }
@@ -85,12 +113,28 @@ export function Maps(props: Props) {
         if (message.event === "onMapClicked" && message.payload) {
             if (props.onSelectLocation) {
                 props.onSelectLocation(message.payload.touchLatLng);
-                if (props.selectionMarkerIcon) {
+                if (props.markerIcon) {
                     const marker: MapMarker = createMarker(message.payload.touchLatLng)
                     setMarkers([marker]);
                 }
             }
         }
+
+        if (message.event === "onMapMarkerClicked" && message.payload) {
+            if (props.markerLocations && props.onMarkedLocationPress && message.payload) {
+                console.log("onMarkerClicked", message.payload);
+                const markerLocation = props.markerLocations.find((location) => location.key === message.payload?.mapMarkerID);
+                console.log("markerLocation", markerLocation, message.payload.mapMarkerID, props.markerLocations.map((location) => location.key));
+                if (markerLocation) {
+                    console.log("onMarkerClicked", markerLocation);
+                    props.onMarkedLocationPress(markerLocation.key);
+                }
+            }
+        }
+    }
+
+    function onError(syntheticEvent: NativeSyntheticEvent<WebViewError>) {
+        console.error("onError", syntheticEvent.nativeEvent.description);
     }
     return (
         <LeafletView
@@ -100,6 +144,7 @@ export function Maps(props: Props) {
                 lng: location.longitude,
             }}
             onMessageReceived={onMessageReceived}
+            onError={onError}
             mapMarkers={markers}
         />
     );
