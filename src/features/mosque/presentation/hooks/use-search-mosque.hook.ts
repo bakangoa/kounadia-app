@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { SearchMosqueItem } from "../../application/search-mosque.usecase";
 import { searchMosque, searchMosqueAction } from "../redux/mosque.action";
 
-const pageSize = 10; // Define a constant for the number of results per page
+const pageSize = 30; // Define a constant for the number of results per page
 export function useSearchMosque() {
     // This hook can be used to manage the state and logic for searching mosques.
     // For example, it could handle input changes, API calls, and results filtering.
@@ -18,7 +18,7 @@ export function useSearchMosque() {
     const isSuccess = useAppSelector((state) => state.status[searchMosqueAction]?.status === 'success');
 
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
 
     const { location } = useGeolocation();
 
@@ -59,6 +59,7 @@ export function useSearchMosque() {
     };
 
     function loadMore() {
+        console.info("loadMore", page);
         setPage(page + 1);
         search({
             name: searchTerm,

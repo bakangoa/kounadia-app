@@ -8,7 +8,7 @@ import { useGeolocation } from "@/src/shared/hooks/use-geolocation.hook";
 import { useNavigate } from "@/src/shared/hooks/use-navigate";
 import { ScreenLayout } from "@/src/shared/layouts/screen.layout";
 import { FlashList } from "@shopify/flash-list";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import { SearchMosqueItem } from "../../application/search-mosque.usecase";
@@ -27,11 +27,6 @@ export function SearchMosqueScreen() {
     const [showMap, setShowMap] = useState(false);
     const [selectedMosque, setSelectedMosque] = useState<SearchMosqueItem | null>(null);
     const { navigateToMosqueDetails } = useNavigate();
-
-    useEffect(() => {
-        refresh(); // Refresh the mosques when the component mounts
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     function handleSearchPressed() {
         setShowMap(true);

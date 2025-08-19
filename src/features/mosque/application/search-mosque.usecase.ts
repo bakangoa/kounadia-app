@@ -33,7 +33,6 @@ export class SearchMosqueUseCase implements Executable<SearchMosqueInput, Search
     }) { }
 
     async execute(input: SearchMosqueInput): Promise<SearchMosqueOutput> {
-        console.log("Executing SearchMosqueUseCase with input:", input);
         const dtos = await this.config.mosqueRepository.search({
             name: input.name,
         });
@@ -73,6 +72,9 @@ export class SearchMosqueUseCase implements Executable<SearchMosqueInput, Search
                 longitude: input.location?.longitude || 0
             });
             const openCloseHour = mosque.isOpen(now) ? mosque.nextCloseDateTime() : mosque.nextOpenDateTime();
+            if (!openCloseHour) {
+                return null;
+            }
             return {
                 id: snapshot.id,
                 photos: snapshot.photos || [],
@@ -98,7 +100,7 @@ export class SearchMosqueUseCase implements Executable<SearchMosqueInput, Search
         const paginatedItems = results.slice(start, end);
 
         return {
-            items: paginatedItems,
+            items: paginatedItems.filter((item) => item !== null) as SearchMosqueItem[],
             totalCount: results.length,
             page: input.page ?? 1,
             pageSize: input.pageSize ?? 10,

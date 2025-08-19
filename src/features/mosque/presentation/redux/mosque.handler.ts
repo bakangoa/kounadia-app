@@ -30,7 +30,6 @@ export class MosqueHandler implements Handler<void> {
                     this.handler.succeed(searchMosqueAction, api);
                     return;
                 }
-                console.info("SearchMosqueHandler", payload);
                 const result = await this.searchUseCase.execute(payload);
 
                 api.dispatch(mosqueActions.setFoundMosques(result));
@@ -53,7 +52,6 @@ export class MosqueHandler implements Handler<void> {
                     return;
                 }
                 const result = await this.getUseCase.execute(payload);
-                console.info("GetMosqueHandler", result);
                 api.dispatch(mosqueActions.setSelectedMosqueId(payload.id));
                 api.dispatch(mosqueActions.setSelectedMosque(result));
                 this.handler.succeed(getMosque.type, api, 50000);
