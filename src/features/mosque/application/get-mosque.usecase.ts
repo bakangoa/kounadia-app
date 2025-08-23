@@ -40,6 +40,9 @@ export class GetMosqueUsecase implements Executable<GetMosqueInput, GetMosqueOut
         });
         const now = new Date();
         const openCloseHour = mosque.isOpen(now) ? mosque.nextCloseDateTime() : mosque.nextOpenDateTime();
+        if (!openCloseHour) {
+            return null;
+        }
 
         const location = await this.locationRepository.getCurrentLocation();
         const distance = mosque.distanceFrom({
