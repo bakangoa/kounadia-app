@@ -18,6 +18,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          50: '#E9F4E9',
+          500: '#1F9026'
+        },
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
           50: 'rgb(var(--color-primary-50)/<alpha-value>)',

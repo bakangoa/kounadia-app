@@ -5,6 +5,9 @@ import { initReactI18next } from "react-i18next";
 import enAdd from "./en/add.json";
 import enCommon from "./en/common.json";
 import enHome from "./en/home.json";
+import enLogin from "./en/login.json";
+import enOnboarding from "./en/onboarding.json";
+import enRegister from "./en/register.json";
 
 const deviceLanguage = getLocales()?.[0]?.languageCode ?? "en";
 
@@ -18,13 +21,16 @@ i18n
     lng: deviceLanguage,
     fallbackLng: "en",
     debug: true,
-    ns: ['common', 'home', 'add'],
+    ns: ['common', 'home', 'add', "onboarding", "login", "register"],
     defaultNS: 'common',
     resources: {
       en: {
         common: enCommon,
         home: enHome,
         add: enAdd,
+        onboarding: enOnboarding,
+        login: enLogin,
+        register: enRegister
       },
     },
     interpolation: {

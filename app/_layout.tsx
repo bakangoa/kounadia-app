@@ -18,6 +18,7 @@ export default function RootLayout() {
       <Provider store={store}>
         <StatusBar backgroundColor="#fff" />
         <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="add-form" options={{ headerShown: false }} />
           <Stack.Screen name="mosque/[id]" options={{ headerShown: false, animation: "slide_from_bottom" }} />

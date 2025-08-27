@@ -37,11 +37,25 @@ export function useNavigate() {
         dispatch(back());
     }
 
+    function navigateToLogin() {
+        dispatch(forward({
+            routeName: routes.LOGIN
+        }));
+    }
+
+    function navigateToRegister() {
+        dispatch(forward({
+            routeName: routes.REGISTER
+        }));
+    }
+
     return {
         navigateBack,
         navigateToHome,
         navigateToAdd,
         navigateToAddForm,
-        navigateToMosqueDetails
+        navigateToMosqueDetails,
+        navigateToLogin,
+        navigateToRegister
     }
 }
