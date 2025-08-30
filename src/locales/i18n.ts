@@ -6,6 +6,7 @@ import enAdd from "./en/add.json";
 import enCommon from "./en/common.json";
 import enHome from "./en/home.json";
 import enLogin from "./en/login.json";
+import enNotification from "./en/notification.json";
 import enOnboarding from "./en/onboarding.json";
 import enRegister from "./en/register.json";
 
@@ -21,7 +22,7 @@ i18n
     lng: deviceLanguage,
     fallbackLng: "en",
     debug: true,
-    ns: ['common', 'home', 'add', "onboarding", "login", "register"],
+    ns: ['common', 'home', 'add', "onboarding", "login", "register", "notification"],
     defaultNS: 'common',
     resources: {
       en: {
@@ -30,7 +31,8 @@ i18n
         add: enAdd,
         onboarding: enOnboarding,
         login: enLogin,
-        register: enRegister
+        register: enRegister,
+        notification: enNotification
       },
     },
     interpolation: {

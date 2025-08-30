@@ -14,6 +14,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 // eslint-disable-next-line import/no-named-as-default
 import z from "zod";
+import { useRegister } from "../hooks/use-register.hook";
 
 const registerSchema = z.object({
     fullname: z.string().min(6, "form.fullname.error.required"),
@@ -23,12 +24,16 @@ const registerSchema = z.object({
 export function RegisterScreen() {
     const { t } = useTranslation("register");
     const { navigateToLogin } = useNavigate();
+    const { register, isLoading } = useRegister();
     const method = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema)
     });
 
     function onSubmit(data: z.infer<typeof registerSchema>) {
-        console.log(data);
+        register({
+            fullname: data.fullname,
+            phone: data.phone
+        });
     }
 
     return (
@@ -92,6 +97,7 @@ export function RegisterScreen() {
                                             <InputField
                                                 placeholder={t("form.phone.placeholder")}
                                                 value={field.value}
+                                                keyboardType="phone-pad"
                                                 onChangeText={(text) => field.onChange(text)}
                                             />
                                         </Input>
@@ -104,7 +110,10 @@ export function RegisterScreen() {
                                     </FormControl>
                                 )}
                             />
-                            <Button onPress={method.handleSubmit(onSubmit)} className="w-full bg-brand-500 rounded-lg h-12">
+                            <Button 
+                                onPress={method.handleSubmit(onSubmit)} 
+                                className="w-full bg-brand-500 rounded-lg h-12" 
+                                isDisabled={isLoading}>
                                 <ButtonText>
                                     {t("register-button")}
                                 </ButtonText>

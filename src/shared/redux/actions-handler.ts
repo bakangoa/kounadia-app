@@ -1,6 +1,8 @@
 
 import { AppDispatch, RootState } from "@/src/store";
 import { ListenerEffectAPI, ListenerMiddlewareInstance, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { DomainErrorFilter } from "../errors/domain-error.handler";
+import { notifyErrorAction } from "./notifier/notifier.action";
 import { OperationMeta, setStatus } from "./status-manager.slice";
 
 type TypeAction = Parameters<AppDispatch>[0];
@@ -9,7 +11,7 @@ type ListenerAPI = ListenerEffectAPI<unknown, ThunkDispatch<unknown, unknown, Un
 export interface ActionHandler {
     register(key: string, actionCreator: (data: any) => TypeAction): void;
     unregister(key: string): void;
-    on<Payload>(key: string, callback: (payload: Payload, api: ListenerAPI) => void): void;
+    on<Payload>(key: string, callback: (payload: Payload, api: ListenerAPI, errorHandler: (error: any) => void) => void): void;
     startLoading(key: string, api: ListenerAPI): void;
     succeed(key: string, api: ListenerAPI, cacheDurationMs?: number): void;
     fail(key: string, api: ListenerAPI, error?: any): void;
@@ -19,7 +21,10 @@ export interface ActionHandler {
 
 export class ListenerActionHandler implements ActionHandler {
     private _registry = new Map<string, (data: any) => TypeAction>();
-    constructor(private readonly listener: ListenerMiddlewareInstance<unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>) { }
+    constructor(
+        private readonly listener: ListenerMiddlewareInstance<unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>,
+        private readonly errorHandler: DomainErrorFilter
+    ) { }
 
     register(key: string, actionCreator: (data: any) => TypeAction) {
         this._registry.set(key, actionCreator);
@@ -62,7 +67,7 @@ export class ListenerActionHandler implements ActionHandler {
 
     on<Payload>(
         key: string,
-        callback: (payload: Payload, api: ListenerAPI) => void
+        callback: (payload: Payload, api: ListenerAPI, errorHandler: (error: any) => void) => void
     ) {
         const actionCreator = this._registry.get(key);
         if (!actionCreator) {
@@ -73,7 +78,12 @@ export class ListenerActionHandler implements ActionHandler {
             actionCreator: actionCreator as any,
             effect: async (action, api) => {
                 console.info("ListenerActionHandler", action.type, action.payload);
-                callback(action.payload as Payload, api);
+                callback(action.payload as Payload, api, (error) => {
+                    const message = this.errorHandler.catch(error);
+                    if (message) {
+                        api.dispatch(notifyErrorAction(message));
+                    }
+                });
             },
         });
     }

@@ -10,10 +10,13 @@ import { VStack } from "@/components/ui/vstack";
 import { useNavigate } from "@/src/shared/hooks/use-navigate";
 import { ScreenLayout } from "@/src/shared/layouts/screen.layout";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { OtpInput } from "react-native-otp-entry";
 // eslint-disable-next-line import/no-named-as-default
 import z from "zod";
+import { useLogin } from "../hooks/use-login.hook";
 
 const loginSchema = z.object({
     phone: z.string().min(10, "form.phone.error.required").regex(/^\d+$/, "form.phone.error.regex"),
@@ -22,12 +25,33 @@ const loginSchema = z.object({
 export function LoginScreen() {
     const { t } = useTranslation("login");
     const { navigateToRegister } = useNavigate();
+    const { tryLogin, login, isSuccess } = useLogin();
+    const [hasTriedLogin, setHasTriedLogin] = useState(false);
+    const [otp, setOtp] = useState("");
     const method = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema)
     });
 
+    useEffect(() => {
+        if (isSuccess && !hasTriedLogin) {
+            setHasTriedLogin(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccess]);
+
     function onSubmit(data: z.infer<typeof loginSchema>) {
-        console.log(data);
+        tryLogin(data.phone);
+    }
+
+    function handleLogin() {
+        if (!otp || otp.length < 4) {
+            return
+        }
+        login(otp);
+    }
+
+    function handleBack() {
+        setHasTriedLogin(false);
     }
 
     return (
@@ -43,41 +67,66 @@ export function LoginScreen() {
                 <Box className={`grow relative bg-white pt-12`}>
                     <FormProvider {...method}>
                         <VStack className="gap-8 px-4">
-                            <Controller
-                                control={method.control}
-                                name="phone"
-                                render={({ field, fieldState }) => (
-                                    <FormControl
-                                        isInvalid={fieldState.invalid}
-                                        size="md"
-                                        isDisabled={field.disabled}
-                                        isReadOnly={false}
-                                        isRequired={true}
-                                    >
-                                        <FormControlLabel>
-                                            <FormControlLabelText>{t("form.phone.label")}</FormControlLabelText>
-                                        </FormControlLabel>
-                                        <Input className="my-1 rounded-lg">
-                                            <InputField
-                                                placeholder={t("form.phone.placeholder")}
-                                                value={field.value}
-                                                onChangeText={(text) => field.onChange(text)}
-                                            />
-                                        </Input>
-                                        <FormControlError>
-                                            <FormControlErrorIcon as={AlertCircleIcon} />
-                                            <FormControlErrorText>
-                                                {fieldState.error?.message ? t(fieldState.error.message) : ""}
-                                            </FormControlErrorText>
-                                        </FormControlError>
-                                    </FormControl>
-                                )}
-                            />
-                            <Button onPress={method.handleSubmit(onSubmit)} className="w-full bg-brand-500 rounded-lg h-12">
-                                <ButtonText>
-                                    {t("login-button")}
-                                </ButtonText>
-                            </Button>
+                            {
+                                !hasTriedLogin ? (
+                                    <>
+                                        <Controller
+                                            control={method.control}
+                                            name="phone"
+                                            render={({ field, fieldState }) => (
+                                                <FormControl
+                                                    isInvalid={fieldState.invalid}
+                                                    size="md"
+                                                    isDisabled={field.disabled}
+                                                    isReadOnly={false}
+                                                    isRequired={true}
+                                                >
+                                                    <FormControlLabel>
+                                                        <FormControlLabelText>{t("form.phone.label")}</FormControlLabelText>
+                                                    </FormControlLabel>
+                                                    <Input className="my-1 rounded-lg">
+                                                        <InputField
+                                                            placeholder={t("form.phone.placeholder")}
+                                                            value={field.value}
+                                                            keyboardType="phone-pad"
+                                                            onChangeText={(text) => field.onChange(text)}
+                                                        />
+                                                    </Input>
+                                                    <FormControlError>
+                                                        <FormControlErrorIcon as={AlertCircleIcon} />
+                                                        <FormControlErrorText>
+                                                            {fieldState.error?.message ? t(fieldState.error.message) : ""}
+                                                        </FormControlErrorText>
+                                                    </FormControlError>
+                                                </FormControl>
+                                            )}
+                                        />
+                                        <Button onPress={method.handleSubmit(onSubmit)} className="w-full bg-brand-500 rounded-lg h-12">
+                                            <ButtonText>
+                                                {t("login-button")}
+                                            </ButtonText>
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <OtpInput
+                                            numberOfDigits={4}
+                                            type="numeric"
+                                            onTextChange={setOtp}
+                                        />
+                                        <Button onPress={handleLogin} className="w-full bg-brand-500 rounded-lg h-12">
+                                            <ButtonText>
+                                                {t("login-button")}
+                                            </ButtonText>
+                                        </Button>
+                                        <Button onPress={handleBack} className="w-full rounded-lg h-12">
+                                            <ButtonText>
+                                                {t("back")}
+                                            </ButtonText>
+                                        </Button>
+                                    </>
+                                )
+                            }
                             <HStack className="items-center justify-center gap-2">
                                 <Text>
                                     {t("to-register-label")}

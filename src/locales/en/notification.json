@@ -1,0 +1,9 @@
+{
+    "auth.errors.loginPhoneRequired": "Phone number is required",
+    "auth.errors.loginPhoneInvalid": "Phone number is invalid",
+    "auth.errors.userNotFound": "User not found",
+    "auth.errors.otpInvalid": "OTP is invalid",
+    "auth.info.otpSent": "OTP has been sent to your phone number",
+    "auth.success.loginSuccess": "Login success",
+    "auth.errors.loginFailed": "Login failed"
+}
