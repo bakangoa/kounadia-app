@@ -1,53 +1,90 @@
-import { container } from "@/src/di/container";
+
 import { AppDispatch, RootState } from "@/src/store";
-import { listenerMiddleware } from "@/src/store/listener";
-import { Executable } from "../core/executable";
+import { ListenerEffectAPI, ListenerMiddlewareInstance, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { DomainErrorFilter } from "../errors/domain-error.handler";
+import { notifyErrorAction } from "./notifier/notifier.action";
 import { OperationMeta, setStatus } from "./status-manager.slice";
 
-const shouldRefetch = (meta: OperationMeta | undefined): boolean => {
-    if (!meta?.cacheUntil) return true;
-    return Date.now() > meta.cacheUntil;
-};
-
 type TypeAction = Parameters<AppDispatch>[0];
-export const handleAsync =
-    <ActionPending, ActionSuccess extends TypeAction, ActionFailure extends TypeAction, UseCase extends Executable<unknown, unknown>>(params: {
+
+type ListenerAPI = ListenerEffectAPI<unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>
+export interface ActionHandler {
+    register(key: string, actionCreator: (data: any) => TypeAction): void;
+    unregister(key: string): void;
+    on<Payload>(key: string, callback: (payload: Payload, api: ListenerAPI, errorHandler: (error: any) => void) => void): void;
+    startLoading(key: string, api: ListenerAPI): void;
+    succeed(key: string, api: ListenerAPI, cacheDurationMs?: number): void;
+    fail(key: string, api: ListenerAPI, error?: any): void;
+    idle(key: string, api: ListenerAPI): void;
+    stillCached(key: string, api: ListenerAPI): boolean;
+}
+
+export class ListenerActionHandler implements ActionHandler {
+    private _registry = new Map<string, (data: any) => TypeAction>();
+    constructor(
+        private readonly listener: ListenerMiddlewareInstance<unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>,
+        private readonly errorHandler: DomainErrorFilter
+    ) { }
+
+    register(key: string, actionCreator: (data: any) => TypeAction) {
+        this._registry.set(key, actionCreator);
+    }
+
+    unregister(key: string) {
+        this._registry.delete(key);
+    }
+
+    private shouldRefetch(meta: OperationMeta | undefined): boolean {
+        if (!meta?.cacheUntil) return true;
+        return Date.now() > meta.cacheUntil;
+    };
+
+    stillCached(key: string, api: ListenerAPI): boolean {
+        const keyToUse = key;
+        const meta = (api.getState() as RootState).status[keyToUse];
+        if (!this.shouldRefetch(meta)) {
+            // Skip this fetch — still cached
+            return true;
+        }
+        return false;
+    }
+    startLoading(key: string, api: ListenerAPI) {
+        api.dispatch(setStatus({ key: key, status: 'loading' }));
+        console.info("Action started", key);
+    }
+    succeed(key: string, api: ListenerAPI, cacheDurationMs?: number) {
+        api.dispatch(setStatus({ key, status: 'success', cacheDurationMs: cacheDurationMs }));
+        console.info("Action succeeded", key);
+    }
+    fail(key: string, api: ListenerAPI, error?: any) {
+        api.dispatch(setStatus({ key, status: 'error', error }));
+        console.error("Action failed", key, error);
+    }
+    idle(key: string, api: ListenerAPI) {
+        api.dispatch(setStatus({ key, status: 'idle' }));
+        console.info("Action idle", key);
+    }
+
+    on<Payload>(
         key: string,
-        cacheDurationMs?: number,
-        keyFormat?: (key: string, args?: any) => string,
-        useCaseToken: symbol,
-        successAction: (data: any) => ActionSuccess,
-        failureAction?: (error: any) => ActionFailure,
-        handler: (useCase: UseCase, action: any) => Promise<any>
-    }) =>
-        ({
-            actionCreator,
-        }: {
-            actionCreator: (args?: any) => ActionPending;
-        }) =>
-            listenerMiddleware.startListening({
-                actionCreator: actionCreator as any,
-                effect: async (action, api) => {
-                    const { key, useCaseToken, successAction, failureAction, handler } = params;
+        callback: (payload: Payload, api: ListenerAPI, errorHandler: (error: any) => void) => void
+    ) {
+        const actionCreator = this._registry.get(key);
+        if (!actionCreator) {
+            throw new Error(`Action ${key} is not registered`);
+        }
 
-                    const keyToUse = params.keyFormat ? params.keyFormat(key, action) : key;
-                    const meta = (api.getState() as RootState).status[keyToUse];
-
-                    if (!shouldRefetch(meta)) {
-                        // Skip this fetch — still cached
-                        return;
+        this.listener.startListening({
+            actionCreator: actionCreator as any,
+            effect: async (action, api) => {
+                console.info("ListenerActionHandler", action.type, action.payload);
+                callback(action.payload as Payload, api, (error) => {
+                    const message = this.errorHandler.catch(error);
+                    if (message) {
+                        api.dispatch(notifyErrorAction(message));
                     }
-                    api.dispatch(setStatus({ key: keyToUse, status: 'loading' }));
-                    try {
-                        const useCase = container.resolve<UseCase>(useCaseToken);
-                        const result = await handler(useCase, action);
-                        api.dispatch(successAction(result));
-                        api.dispatch(setStatus({ key: keyToUse, status: 'success', cacheDurationMs: params.cacheDurationMs }));
-                    } catch (err: any) {
-                        if (failureAction) {
-                            api.dispatch(failureAction(err));
-                        }
-                        api.dispatch(setStatus({ key: keyToUse, status: 'error' }));
-                    }
-                },
-            });
+                });
+            },
+        });
+    }
+}

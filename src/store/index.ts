@@ -2,14 +2,16 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import type { TypedUseSelectorHook } from "react-redux";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { userReducer } from "../features/users/presentation/redux/user.slice";
+import { authReducer } from "../features/auth/presentation/redux/auth.slice";
+import { mosqueReducer } from "../features/mosque/presentation/redux/mosque.slice";
 import { expireMiddleware } from "../shared/redux/expiration.middleware";
 import { statusManagerReducer } from "../shared/redux/status-manager.slice";
 import { listenerMiddleware } from "./listener";
 
 const reducers = combineReducers({
-    user: userReducer,
-    status: statusManagerReducer
+    status: statusManagerReducer,
+    auth: authReducer,
+    mosque: mosqueReducer
 });
 
 export const makeStore = () => {

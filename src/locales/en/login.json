@@ -1,0 +1,9 @@
+{
+    "title": "Connectez votre compte",
+    "form.phone.label": "Numéro de téléphone",
+    "form.phone.placeholder": "Entrez votre numéro de téléphone",
+    "login-button": "Continuer",
+    "to-register-label": "Vous n'avez pas de compte ?",
+    "register": "Inscription",
+    "back": "Retour"
+}

@@ -1,7 +1,5 @@
-import { UserScreen } from "@/src/features/users/presentation/screens/user.screen";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return (
-    <UserScreen />
-  );
+  return <Redirect href="/(auth)/onboarding" />;
 }

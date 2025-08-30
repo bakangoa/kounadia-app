@@ -1,0 +1,12 @@
+{
+    "welcome": "Welcome to {{appName}}",
+    "maps_title": "Nearby prayer places",
+    "search_placeholder": "Find your mosque here",
+    "share": "Share",
+    "route": "Route",
+    "favorite": "Favorite",
+    "opened": "Opened",
+    "closed": "Closed",
+    "open_at": "Open at {{time}}",
+    "closed_at": "Closed at {{time}}"
+}

@@ -1,0 +1,10 @@
+{
+    "title": "Créer votre compte",
+    "form.fullname.label": "Nom & Prénom(s)",
+    "form.fullname.placeholder": "Entrez votre nom",
+    "form.phone.label": "Numéro de téléphone",
+    "form.phone.placeholder": "Entrez votre numéro de téléphone",
+    "register-button": "Continuer",
+    "to-login-label": "Vous avez deja un compte ?",
+    "login": "Connexion"
+}
