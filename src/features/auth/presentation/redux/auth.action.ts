@@ -5,3 +5,4 @@ import { RegisterInput } from "../../application/register.usecase";
 
 export const loginAction = createAction<LoginInput>("auth/login");
 export const registerAction = createAction<RegisterInput>("auth/register");
+export const getSessionAction = createAction("auth/getSession");

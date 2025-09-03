@@ -6,7 +6,8 @@ import { replace } from "@/src/shared/redux/navigation/navigation.action";
 import { notifyInfoAction, notifySuccessAction } from "@/src/shared/redux/notifier/notifier.action";
 import { LoginInput, LoginOutput } from "../../application/login.usecase";
 import { RegisterInput, RegisterOutput } from "../../application/register.usecase";
-import { loginAction, registerAction } from "./auth.action";
+import { Session } from "../../domain/models/session.model";
+import { getSessionAction, loginAction, registerAction } from "./auth.action";
 import { AuthActions } from "./auth.slice";
 
 
@@ -14,10 +15,12 @@ export class AuthHandler implements Handler<void> {
     constructor(
         private readonly handler: ActionHandler,
         private readonly loginUseCase: Executable<LoginInput, LoginOutput>,
-        private readonly registerUseCase: Executable<RegisterInput, RegisterOutput>
+        private readonly registerUseCase: Executable<RegisterInput, RegisterOutput>,
+        private readonly getSessionUseCase: Executable<void, Session | null>
     ) {
         this.handler.register(loginAction.type, loginAction);
         this.handler.register(registerAction.type, registerAction);
+        this.handler.register(getSessionAction.type, getSessionAction);
     }
 
     private handleLogin() {
@@ -53,7 +56,6 @@ export class AuthHandler implements Handler<void> {
             }
         });
     }
-
     private handleRegister() {
         this.handler.on<RegisterInput>(registerAction.type, async (payload, api, catcher) => {
             if (!payload) {
@@ -75,8 +77,31 @@ export class AuthHandler implements Handler<void> {
             }
         });
     }
+    private getSession() {
+        this.handler.on(getSessionAction.type, async (payload, api, catcher) => {
+            try {
+                this.handler.startLoading(getSessionAction.type, api);
+                const result = await this.getSessionUseCase.execute();
+
+                if (!result) {
+                    api.dispatch(AuthActions.setSession(null));
+                } else {
+                    api.dispatch(AuthActions.setSession({
+                        token: result.token
+                    }));
+                }
+
+                this.handler.succeed(getSessionAction.type, api);
+            } catch (error) {
+                catcher(error);
+                this.handler.fail(getSessionAction.type, api, error);
+            }
+        });
+    }
+
     handle(): void {
         this.handleLogin();
         this.handleRegister();
+        this.getSession();
     }
 }

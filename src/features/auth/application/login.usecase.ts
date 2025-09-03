@@ -2,9 +2,9 @@ import { Executable } from "@/src/shared/core/executable";
 import { BusinessRuleViolationError } from "@/src/shared/errors/business-rule-violation.error";
 import { NotFoundError } from "@/src/shared/errors/not-found.error";
 import { ValidationError } from "@/src/shared/errors/validation.error";
-import { LoginRepository } from "../domain/auth.port";
-import { CheckOtpRepository, SendOtpRepository } from "../domain/otp.port";
-import { CheckUserExistsRepository } from "../domain/user.port";
+import { LoginRepository } from "../domain/ports/auth.port";
+import { CheckOtpRepository, SendOtpRepository } from "../domain/ports/otp.port";
+import { CheckUserExistsRepository } from "../domain/ports/user.port";
 
 
 export interface LoginInput {

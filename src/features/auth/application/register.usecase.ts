@@ -1,5 +1,5 @@
 import { Executable } from "@/src/shared/core/executable";
-import { CheckUserExistsRepository, CreateUserRepository } from "../domain/user.port";
+import { CheckUserExistsRepository, CreateUserRepository } from "../domain/ports/user.port";
 
 
 export interface RegisterInput {

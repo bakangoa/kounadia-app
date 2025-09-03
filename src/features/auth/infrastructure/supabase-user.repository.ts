@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import * as Crypto from 'expo-crypto';
-import { UserRepository } from "../domain/user.port";
+import { UserRepository } from "../domain/ports/user.port";
 
 
 export class SupabaseUserRepository implements UserRepository {
@@ -26,7 +26,15 @@ export class SupabaseUserRepository implements UserRepository {
             .select("phone")
             .eq("phone", phone)
             .limit(1)
-            
+
+        const res = await this.supabase
+            .from("users")
+            .select("*");
+
+        console.info("res", res)
+
+        console.log("isExists", data, error)
+
         if (error) {
             throw error
         }

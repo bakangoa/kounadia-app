@@ -1,4 +1,4 @@
-import { OtpRepository } from "../domain/otp.port";
+import { OtpRepository } from "../domain/ports/otp.port";
 
 
 export class FakeOtpRepository implements OtpRepository {

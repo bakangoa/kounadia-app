@@ -3,6 +3,7 @@ import { Module } from "@/src/shared/core/module";
 import { supabase } from "@/src/shared/services/supabase.service";
 import { SharedModule } from "@/src/shared/shared.module";
 import { StringUtils } from "@/src/shared/utils/string.utils";
+import { GetSessionUsecase } from "./application/get-session.usecase";
 import { LoginUsecase } from "./application/login.usecase";
 import { RegisterUsecase } from "./application/register.usecase";
 import { FakeOtpRepository } from "./infrastructure/fake-otp.repository";
@@ -40,10 +41,15 @@ export const AuthModule: Module = {
             }
         );
 
+        const getSessionUsecase = new GetSessionUsecase(
+            authRepo
+        );
+
         container.register(TOKENS.Auth, () => new AuthHandler(
             container.resolve(SharedModule.tokens!.ActionHandler),
             loginUsecase,
-            registerUsecase
+            registerUsecase,
+            getSessionUsecase
         ));
     },
     initialize: () => {

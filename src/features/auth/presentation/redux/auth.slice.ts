@@ -18,7 +18,7 @@ const slice = createSlice({
         setLoginPhone: (state, action: { payload: string }) => {
             state.loginPhone = action.payload;
         },
-        setSession: (state, action: { payload: { token: string } }) => {
+        setSession: (state, action: { payload: { token: string } | null }) => {
             state.session = action.payload;
         }
     }

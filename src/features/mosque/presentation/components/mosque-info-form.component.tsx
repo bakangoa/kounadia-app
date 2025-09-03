@@ -1,8 +1,9 @@
 
 import { Box } from "@/components/ui/box";
 import { Button, ButtonText } from "@/components/ui/button";
+import { Center } from "@/components/ui/center";
 import { FormControl, FormControlError, FormControlErrorIcon, FormControlErrorText, FormControlHelper, FormControlHelperText, FormControlLabel, FormControlLabelText } from "@/components/ui/form-control";
-import { AlertCircleIcon } from "@/components/ui/icon";
+import { AlertCircleIcon, LoaderIcon } from "@/components/ui/icon";
 import { Input, InputField } from "@/components/ui/input";
 import { VStack } from "@/components/ui/vstack";
 import { Maps } from "@/src/shared/components/maps.component";
@@ -46,6 +47,14 @@ export function MosqueInfoForm(props: Props) {
             return;
         }
         props.onNext();
+    }
+
+    if (!userLocation) {
+        return (
+            <Center className="flex-1">
+                <LoaderIcon />
+            </Center>
+        )
     }
     return (
         <>
